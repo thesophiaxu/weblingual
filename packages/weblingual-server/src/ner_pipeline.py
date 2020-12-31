@@ -76,6 +76,7 @@ class TokenClassificationPipeline(Pipeline):
         task: str = "",
         grouped_entities: bool = False,
         ignore_subwords: bool = False,
+        combine_wordpiece: bool = False,
     ):
         super().__init__(
             model=model,
@@ -182,6 +183,12 @@ class TokenClassificationPipeline(Pipeline):
                     for idx, label_idx in enumerate(labels_idx)
                     if (self.model.config.id2label[label_idx] not in self.ignore_labels) and not special_tokens_mask[idx]
                 ]
+
+                if self.combine_wordpiece:
+                    for i in range(filtered_labels_idx):
+                        word = self.tokenizer.convert_ids_to_tokens([int(input_ids[filtered_labels_idx[i][0]])])[0]
+                        if word.startswith('##'):
+                            filtered_labels_idx[i][1] = filtered_labels_idx[i-1][1]
 
                 for idx, label_idx in filtered_labels_idx:
                     if offset_mapping is not None:
