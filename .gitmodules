@@ -1,0 +1,3 @@
+[submodule "datasets/broad_twitter_corpus"]
+	path = datasets/broad_twitter_corpus
+	url = https://github.com/GateNLP/broad_twitter_corpus
