@@ -8,7 +8,7 @@ printLine("Using the 'printLine' function from the Print Module");
 
 let texts = []
 
-let batch = 64;
+let batch = 2;
 function nextBatch(texts) {
     let thisBatch = texts.splice(0, batch);
     NERContent(thisBatch).then((results) => {

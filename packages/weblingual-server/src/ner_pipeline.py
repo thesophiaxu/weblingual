@@ -148,6 +148,9 @@ class TokenClassificationPipeline(Pipeline):
                     padding=True,
                     return_special_tokens_mask=True,
                     return_offsets_mapping=self.tokenizer.is_fast,
+                    #stride=512,
+                    #return_overflowing_tokens=True,
+                    #max_length=512
                 )
                 if self.tokenizer.is_fast:
                     offset_mapping = tokens.pop("offset_mapping").cpu().numpy()[0]
@@ -155,6 +158,10 @@ class TokenClassificationPipeline(Pipeline):
                     offset_mapping = offset_mappings[i]
                 else:
                     offset_mapping = None
+
+                #overflowed_tokens = tokens.pop("overflowing_tokens").cpu().numpy()[0]
+                #print(overflowed_tokens)
+                print(tokens)
 
                 special_tokens_mask = tokens.pop("special_tokens_mask").cpu().numpy()[0]
 
