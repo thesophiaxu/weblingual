@@ -7,7 +7,7 @@ A general framework for natural language tasks for day-to-day usages using recen
 - [x] Instructions for GPU/CUDA on server
 - [x] Basic NER functionality based on existing fine-tuned weights
 - [ ] Better NER by fine-tuning on production-scale datasets
-- [ ] Better entity recognition with wordpiece options
+- [x] Better entity recognition with wordpiece options
 - [ ] Ability to use a remote server for NER
 - User Interface
 - [x] Basic extension framework using React
