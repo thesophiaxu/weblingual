@@ -9,6 +9,11 @@ import json
 # Environmenal Variables
 VERSION = "0.0.1"
 
+import sys
+model_loc = sys.argv[1]
+if not model_loc:
+    model_loc = "dbmdz/bert-large-cased-finetuned-conll03-english"
+
 # Models and Pipelines
 #model = GPT2ForTokenClassification.from_pretrained('gpt2-large')
 #model_classification = GPT2ForSequenceClassification.from_pretrained('gpt2-large')
@@ -18,7 +23,7 @@ VERSION = "0.0.1"
 #tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 #pipeline_sentiment = pipeline('sentiment-analysis', model=model_classification, tokenizer=tokenizer)
 #pipeline_ner = pipeline('ner', model=model_token_classification, tokenizer=tokenizer)
-model_ner = AutoModelForTokenClassification.from_pretrained("dbmdz/bert-large-cased-finetuned-conll03-english").to('cuda')
+model_ner = AutoModelForTokenClassification.from_pretrained(model_loc).to('cuda')
 tokenizer_ner = AutoTokenizer.from_pretrained('bert-large-cased')
 pipeline_ner = TokenClassificationPipeline(task="ner", model=model_ner, tokenizer=tokenizer_ner, grouped_entities=True, device=0)
 #pipeline_ner = pipeline('ner', grouped_entities=True)

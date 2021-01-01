@@ -76,7 +76,7 @@ class TokenClassificationPipeline(Pipeline):
         task: str = "",
         grouped_entities: bool = False,
         ignore_subwords: bool = False,
-        combine_wordpiece: bool = False,
+        combine_wordpiece: bool = False, # Optional, for models fine tuned on single wordpiece thingys
     ):
         super().__init__(
             model=model,
@@ -99,6 +99,7 @@ class TokenClassificationPipeline(Pipeline):
         self.ignore_labels = ignore_labels
         self.grouped_entities = grouped_entities
         self.ignore_subwords = ignore_subwords
+        self.combine_wordpiece = combine_wordpiece
 
         if self.ignore_subwords and not self.tokenizer.is_fast:
             raise ValueError(
@@ -178,17 +179,26 @@ class TokenClassificationPipeline(Pipeline):
                 entities = []
                 # Filter to labels not in `self.ignore_labels`
                 # Filter special_tokens
-                filtered_labels_idx = [
+                labels_idxs = [
                     (idx, label_idx)
                     for idx, label_idx in enumerate(labels_idx)
-                    if (self.model.config.id2label[label_idx] not in self.ignore_labels) and not special_tokens_mask[idx]
                 ]
 
                 if self.combine_wordpiece:
-                    for i in range(filtered_labels_idx):
-                        word = self.tokenizer.convert_ids_to_tokens([int(input_ids[filtered_labels_idx[i][0]])])[0]
+                    for i in range(len(labels_idxs)):
+                        (idx, label) = labels_idxs[i]
+                        prev_label = labels_idxs[i-1][1]
+                        word = self.tokenizer.convert_ids_to_tokens([int(input_ids[idx])])[0]
                         if word.startswith('##'):
-                            filtered_labels_idx[i][1] = filtered_labels_idx[i-1][1]
+                            labels_idxs[i] = (idx, prev_label)
+
+                # Filter to labels not in `self.ignore_labels`
+                # Filter special_tokens
+                filtered_labels_idx = [
+                    (idx, label_idx)
+                    for idx, label_idx in labels_idxs
+                    if (self.model.config.id2label[label_idx] not in self.ignore_labels) and not special_tokens_mask[idx]
+                ]
 
                 for idx, label_idx in filtered_labels_idx:
                     if offset_mapping is not None:
